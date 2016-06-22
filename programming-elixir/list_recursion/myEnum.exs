@@ -25,4 +25,11 @@ defmodule MyEnum do
   def take(_list, 0), do: []
   def take([head | tail], n), do: [head | take(tail, n - 1)]
 
+  def flatten([ head | tail ]) when not is_list(head) do
+    [head | flatten(tail)]
+  end
+  def flatten([ head | tail ]),
+    do: flatten(head) ++ flatten(tail)
+  def flatten([]), do: []
+
 end
