@@ -24,4 +24,20 @@ defmodule PragmaticTaxes do
     order ++ [total_amount: total_amount]
   end
 
+  defp parse_line(<< id::bitstring-size(24) >> <> ",:" <>
+                  << ship_to::bitstring-size(16) >> <> "," <>
+                  << net_amount::bitstring >>) do
+    { id, _ } = Integer.parse(id)
+    { net_amount, _ } = Float.parse(net_amount)
+    [ id: id, ship_to: :"#{ship_to}", net_amount: net_amount ]
+  end
+
+  def parse_taxes(string) do
+    File.open!(string)
+    |> IO.stream(:line)
+    |> Stream.drop(1)
+    |> Stream.map(&parse_line/1)
+    |> add_total_amounts(pp_tax_rates)
+  end
+
 end
