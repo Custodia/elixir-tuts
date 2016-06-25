@@ -75,4 +75,19 @@ defmodule StringManipulation do
     result
   end
 
+  defp center(string, length) do
+    stringLength = (String.length string)
+    difference = length - stringLength
+    string
+    |> String.rjust(stringLength + div(difference, 2))
+    |> String.ljust(length)
+  end
+
+  def center(list) when is_list(list) do
+    maxLength = list |> Enum.map(&String.length/1) |> Enum.max
+    list
+    |> Enum.map(&center(&1, maxLength))
+    |> Enum.each(&IO.puts/1)
+  end
+
 end
