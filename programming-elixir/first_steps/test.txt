@@ -1,3 +1,0 @@
-First line of test.text
-Second line
-end
