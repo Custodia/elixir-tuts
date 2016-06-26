@@ -42,9 +42,9 @@ defmodule Issues.CLI do
 
   On :help prints out a help message to the command line.
 
-  On { user, project, count } raises a "Not implemented" exception. In the
-  future this will instead fetch the first count issues from github for the
-  given user and project.
+  On { user, project, count } fetches issue json from the GitHub API for the
+  given project. In the future this will instead fetch the first count issues
+  from github for the given user and project.
   """
   def process(:help) do
     IO.puts """
@@ -52,6 +52,9 @@ defmodule Issues.CLI do
     """
     System.halt(0)
   end
-  def process(_), do: raise "Not implemented"
+
+  def process({ user, project, _count }) do
+    Issues.GithubIssues.fetch(user, project)
+  end
 
 end
