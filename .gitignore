@@ -1,1 +1,8 @@
 *.beam
+
+# Mix project gitignore
+**/_build
+**/cover
+**/deps
+erl_crash.dump
+*.ez
