@@ -45,8 +45,7 @@ defmodule Issues.CLI do
   On :help prints out a help message to the command line and halts with 0.
 
   On { user, project, count } fetches issue json from the GitHub API for the
-  given project and decodes it into a list of maps. In the future this will
-  instead fetch the first count issues from github for the given user and project.
+  given project and prints it into the console as a ASCII table.
   """
   def process(:help) do
     IO.puts """
