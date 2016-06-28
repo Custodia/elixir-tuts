@@ -40,11 +40,11 @@ defmodule Issues.CLI do
   @doc """
   Expects either :help or { user, project, count }.
 
-  On :help prints out a help message to the command line.
+  On :help prints out a help message to the command line and halts with 0.
 
   On { user, project, count } fetches issue json from the GitHub API for the
-  given project. In the future this will instead fetch the first count issues
-  from github for the given user and project.
+  given project and decodes it into a list of maps. In the future this will
+  instead fetch the first count issues from github for the given user and project.
   """
   def process(:help) do
     IO.puts """
@@ -55,6 +55,33 @@ defmodule Issues.CLI do
 
   def process({ user, project, _count }) do
     Issues.GithubIssues.fetch(user, project)
+    |> decode_response
+    |> convert_to_list_of_maps
+  end
+
+
+  @doc """
+  Handles response json coming from GitHub.
+
+  On :ok returns body
+
+  On :error prints a error message to console and halts with 2.
+  """
+  def decode_response({ :ok, body }), do: body
+
+  def decode_response({ :error, error}) do
+    {_, message} = List.keyfind(error, "message", 0)
+    IO.puts "Error fetching from Github: #{message}"
+    System.halt(2)
+  end
+
+
+  @doc """
+  Converts given list of lists into a list of maps.
+  """
+  def convert_to_list_of_maps(list) do
+    list
+    |> Enum.map(&Enum.into(&1, Map.new))
   end
 
 end
