@@ -17,7 +17,7 @@ defmodule Issues.CLI do
   end
 
   @doc """
-  `argv` can be -h or --help, which returns :helpart.
+  `argv` can be -h or --help, which returns :help.
 
   Otherwise it is a github user name, project name, and (optionally)
   the number of entries to format.
