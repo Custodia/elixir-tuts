@@ -2,6 +2,8 @@ defmodule Issues.CLI do
 
   @default_count 4
 
+  import Issues.TableFormatter, only: [ print_table_for_columns: 2 ]
+
   @moduledoc """
   Handle the command line parsing and the dispatch to
   the various functions that end up generating a
@@ -59,6 +61,7 @@ defmodule Issues.CLI do
     |> convert_to_list_of_maps
     |> sort_into_ascending_order
     |> Enum.take(count)
+    |> print_table_for_columns(["number", "created_at", "title"])
   end
 
 
