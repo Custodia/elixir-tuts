@@ -6,3 +6,6 @@
 **/deps
 erl_crash.dump
 *.ez
+
+# Mix project issues, ignore generated command line executable
+programming-elixir/issues/issues
