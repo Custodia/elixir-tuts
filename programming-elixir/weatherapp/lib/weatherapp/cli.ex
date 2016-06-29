@@ -15,6 +15,7 @@ defmodule Weatherapp.CLI do
   def main(argv) do
     argv
     |> parse_args
+    |> process
   end
 
 
@@ -34,6 +35,25 @@ defmodule Weatherapp.CLI do
 
       _ -> :argument_error
     end
+  end
+
+
+  @doc """
+  Process data parsed from the command line arguments
+
+  Given :help prints out a help message and halts with 0.
+
+  Given :argument_error halts with 2.
+  """
+  def process(:help) do
+    IO.puts """
+    A tool for fetching and displaying weather data
+    """
+    System.halt(0)
+  end
+
+  def process(:argument_error) do
+    System.halt(2)
   end
 
 end
