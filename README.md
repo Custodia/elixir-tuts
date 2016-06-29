@@ -15,3 +15,9 @@ good commit messages.
 
 * Make an app that fetches and formats xml from a site.
   * #1 candidate atm: http://w1.weather.gov/xml/current_obs/KDTO.xml
+
+  
+* Make a "vertical pmap"
+  * Takes a list of elements and a list of functions
+  * Makes a process for each function
+    * Passes elements one by one through the chain in parallel
