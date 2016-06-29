@@ -4,6 +4,8 @@ defmodule Weatherapp.Mixfile do
   def project do
     [app: :weatherapp,
      version: "0.1.0",
+     name: "Weatherapp",
+     source_url: "https://github.com/custodia/elixir-tuts",
      elixir: "~> 1.3",
      build_embedded: Mix.env == :prod,
      start_permanent: Mix.env == :prod,
@@ -27,6 +29,9 @@ defmodule Weatherapp.Mixfile do
   #
   # Type "mix help deps" for more examples and options
   defp deps do
-    []
+    [
+      ex_doc:    "~> 0.11",
+      earmark:   ">= 0.0.0"
+    ]
   end
 end

@@ -10,3 +10,7 @@ erl_crash.dump
 # Mix project issues
 # Ignore generated command line executable
 programming-elixir/issues/issues
+
+# Mix project weatherapp
+# Ignore generated docs
+programming-elixir/weatherapp/doc/
