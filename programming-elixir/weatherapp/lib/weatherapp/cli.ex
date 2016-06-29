@@ -34,6 +34,8 @@ defmodule Weatherapp.CLI do
     case parse do
       { [ help: true ], _, _ } -> :help
 
+      { _, [state], _ } -> state
+
       _ -> :argument_error
     end
   end
@@ -56,6 +58,11 @@ defmodule Weatherapp.CLI do
   def process(:argument_error) do
     Logger.error "Invalid command line arguments for Weatherapp"
     System.halt(2)
+  end
+
+  def process(state) do
+    Logger.debug "State given through the command line: #{state}"
+    state
   end
 
 end
