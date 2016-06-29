@@ -8,6 +8,8 @@ defmodule Weatherapp.CLI do
 
   require Logger
 
+  import Weatherapp.WeatherService, only: [ fetch_state_weather: 1 ]
+
   @doc """
   Main function that command line parameters are passed to.
 
@@ -62,7 +64,7 @@ defmodule Weatherapp.CLI do
 
   def process(state) do
     Logger.debug "State given through the command line: #{state}"
-    state
+    fetch_state_weather(state)
   end
 
 end
