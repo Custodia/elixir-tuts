@@ -6,6 +6,7 @@ defmodule Weatherapp.CLI do
   given parameters
   """
 
+  require Logger
 
   @doc """
   Main function that command line parameters are passed to.
@@ -43,7 +44,7 @@ defmodule Weatherapp.CLI do
 
   Given :help prints out a help message and halts with 0.
 
-  Given :argument_error halts with 2.
+  Given :argument_error logs the error and halts with 2.
   """
   def process(:help) do
     IO.puts """
@@ -53,6 +54,7 @@ defmodule Weatherapp.CLI do
   end
 
   def process(:argument_error) do
+    Logger.error "Invalid command line arguments for Weatherapp"
     System.halt(2)
   end
 
