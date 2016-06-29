@@ -13,7 +13,27 @@ defmodule Weatherapp.CLI do
   Will later parse arguments and pass them to be processed.
   """
   def main(argv) do
-    :ok
+    argv
+    |> parse_args
+  end
+
+
+  @doc """
+  Parse arguments given from the command line.
+
+  Given -h or --help returns :help
+
+  Given anything else returns :argument_error
+  """
+  def parse_args(argv) do
+    parse = OptionParser.parse(argv, switches: [ help: :boolean ],
+                                     aliases:  [ h:    :help ])
+
+    case parse do
+      { [ help: true ], _, _ } -> :help
+
+      _ -> :argument_error
+    end
   end
 
 end
