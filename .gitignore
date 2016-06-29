@@ -9,6 +9,4 @@ erl_crash.dump
 
 # Mix project issues
 # Ignore generated command line executable
-# Ignore generated docs
 programming-elixir/issues/issues
-programming-elixir/issues/doc/
