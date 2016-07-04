@@ -31,4 +31,11 @@ defmodule StackServer.Server do
     { :noreply, [ val | stack ] }
   end
 
+
+  def terminate(reason, state) do
+    IO.puts "terminated with the reason: #{inspect reason}"
+    IO.puts "the stack was:"
+    IO.puts "#{inspect state}"
+  end
+
 end
