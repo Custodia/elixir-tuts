@@ -14,8 +14,11 @@ defmodule StackServer.Mixfile do
   #
   # Type "mix help compile.app" for more information
   def application do
-    [applications: [:logger],
-     mod: {StackServer, []}]
+    [
+      applications: [:logger],
+      mod: {StackServer, ["cat", 'cat', 347]},
+      registered: [ StackServer.Supervisor ]
+    ]
   end
 
   # Dependencies can be Hex packages:
