@@ -37,8 +37,14 @@ defimpl Caesar, for: List do
   end
 end
 
-IO.puts "#{Caesar.rot13("koira")} should be xbven"
-IO.puts "#{Caesar.rot13('koira')} should be xbven"
+defmodule Caesar.Test do
 
-IO.puts "#{Caesar.encrypt("xbven", -13)} should be koira"
-IO.puts "#{Caesar.encrypt('xbven', -13)} should be koira"
+  def println_test do
+    IO.puts "#{Caesar.rot13("koira")} should be xbven"
+    IO.puts "#{Caesar.rot13('koira')} should be xbven"
+
+    IO.puts "#{Caesar.encrypt("xbven", -13)} should be koira"
+    IO.puts "#{Caesar.encrypt('xbven', -13)} should be koira"
+  end
+
+end
