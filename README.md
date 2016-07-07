@@ -15,9 +15,24 @@ good commit messages.
 
 * Make an app that fetches and formats xml from a site.
   * #1 candidate atm: http://w1.weather.gov/xml/current_obs/KDTO.xml
+  * Meh..
 
-  
+
 * Make a "vertical pmap"
   * Takes a list of elements and a list of functions
   * Makes a process for each function
     * Passes elements one by one through the chain in parallel
+
+
+* Implement a Djikstra service
+  * Use protocols so that any type could be accepted
+    * accessible?(loc1, loc2)
+    * distance(loc1, loc2)
+  * Maybe extend this to the reaktor challenge
+    * Api for the challenge is down though so get problem/solution data
+    somewhere and make comprehensive tests
+
+
+* Implement a Telegram bot in elixir
+  * Extend this into a telegram bot api?
+  * Use phoenix?
