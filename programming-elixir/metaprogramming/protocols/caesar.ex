@@ -12,7 +12,7 @@ end
 defimpl Caesar, for: BitString do
   def encrypt(string, shift) do
     char_list = to_char_list string
-    Caesar.encrypt(char_list, shift)
+    to_string(Caesar.encrypt(char_list, shift))
   end
 end
 
@@ -36,6 +36,29 @@ defimpl Caesar, for: List do
     end
   end
 end
+
+
+defmodule Caesar.File do
+
+  defp process_words(words), do: process_words(words, MapSet.new)
+
+  defp process_words([], set), do: set
+  defp process_words([head | tail], set) do
+    encrypted = Caesar.rot13(head)
+    if Enum.any?(tail, &(&1 == encrypted)),
+    do: process_words(tail, set |> MapSet.put(head) |> MapSet.put(encrypted)),
+    else: process_words(tail, set)
+  end
+
+  def scan_file(file_path) do
+    File.stream!(file_path)
+    |> Stream.map(&String.trim/1)
+    |> Enum.flat_map(&String.split/1)
+    |> process_words
+  end
+
+end
+
 
 defmodule Caesar.Test do
 
