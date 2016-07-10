@@ -56,14 +56,15 @@ defimpl String.Chars, for: TodoList do
       Enum.map(entries, fn { id, _ } -> String.length("#{id}") end)
       |> Enum.max()
 
-    "#TodoList\n{\n" <>
+    "%TodoList\n{\n" <>
     (entries
     |> Enum.sort_by(fn {id, _} -> id end)
     |> Enum.map(fn {id, %{ date: { year, month, day }, title: title}} ->
-        "#{String.pad_leading("#{id}", id_max_length + 4)}.  #{year}/" <>
+        "    id: #{String.pad_leading("#{id}", id_max_length)},  "
+        <> "date: #{year}/" <>
         "#{String.pad_leading("#{month}", 2, "0")}" <>
-        "/#{String.pad_leading("#{day}",  2, "0")}" <>
-        "   #{title}\n"
+        "/#{String.pad_leading("#{day}",  2, "0")}," <>
+        "  title: #{title}\n"
       end)
     |> Enum.reduce(&(&2 <> &1))) <>
     "}"
