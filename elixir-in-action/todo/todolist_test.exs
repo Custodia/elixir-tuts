@@ -17,4 +17,8 @@ todo_list = TodoList.update_entry(
     %{entry | id: 13, title: "Kappuchino"}
   end)
 
+todo_list = TodoList.update_entry(
+  todo_list,
+  entry3 = %{id: 3, date: {2013, 12, 19}, title: "This is the third one"})
+
 IO.inspect(TodoList.entries(todo_list, {2013, 12, 19}))

@@ -21,6 +21,10 @@ defmodule TodoList do
   end
 
 
+  def update_entry(todo_list, %{id: _, date: _, title: _} = new_entry) do
+    update_entry(todo_list, new_entry.id, fn _ -> new_entry end)
+  end
+
   def update_entry(%TodoList{entries: entries} = todo_list, id, func) do
     case entries[id] do
       nil -> todo_list
