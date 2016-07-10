@@ -37,4 +37,11 @@ defmodule TodoList do
     end
   end
 
+
+  def remove_entry(%TodoList{entries: entries} = todo_list, id) do
+    new_entries = entries
+    |> Enum.filter(fn {entry_id, _entry} -> entry_id != id end)
+    %TodoList{todo_list | entries: new_entries}
+  end
+
 end
