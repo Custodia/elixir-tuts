@@ -26,7 +26,7 @@ defmodule TodoList do
       nil -> todo_list
 
       old_entry ->
-        new_entry   = func.(old_entry)
+        new_entry   = %{id: _, date: _, title: _} = func.(old_entry)
         new_entry   = %{ new_entry | id: old_entry.id }
         new_entries = HashDict.put(entries, old_entry.id, new_entry)
         %TodoList{todo_list | entries: new_entries}
