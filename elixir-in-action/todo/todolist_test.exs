@@ -9,3 +9,12 @@ todo_list =
   |> TodoList.add_entry(entry3)
 
 IO.inspect(TodoList.entries(todo_list, {2013, 12, 19}))
+
+todo_list = TodoList.update_entry(
+  todo_list,
+  1,
+  fn entry ->
+    %{entry | id: 13, title: "Kappuchino"}
+  end)
+
+IO.inspect(TodoList.entries(todo_list, {2013, 12, 19}))

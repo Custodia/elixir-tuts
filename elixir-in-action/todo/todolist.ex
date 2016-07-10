@@ -21,4 +21,16 @@ defmodule TodoList do
   end
 
 
+  def update_entry(%TodoList{entries: entries} = todo_list, id, func) do
+    case entries[id] do
+      nil -> todo_list
+
+      old_entry ->
+        new_entry   = func.(old_entry)
+        new_entry   = %{ new_entry | id: old_entry.id }
+        new_entries = HashDict.put(entries, old_entry.id, new_entry)
+        %TodoList{todo_list | entries: new_entries}
+    end
+  end
+
 end
