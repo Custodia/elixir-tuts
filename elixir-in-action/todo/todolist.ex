@@ -86,3 +86,38 @@ defimpl Collectable, for: TodoList do
   defp into_callback(todo_list, :halt), do: :ok
 
 end
+
+defimpl Enumerable, for: TodoList do
+
+  def reduce(%TodoList{entries: entries}, acc, fun) do
+    entries =
+      entries |> HashDict.to_list()
+      |> Enum.sort_by(fn { id, _entry } -> id end) 
+      |> Enum.map(fn { _id, entry } -> entry end)
+    do_reduce(entries, acc, fun)
+  end
+
+  defp do_reduce(_ ,    {:halt, acc}, _fun),   do: {:halted, acc}
+  defp do_reduce(list,  {:suspend, acc}, fun), do: {:suspended, acc, &do_reduce(list, &1, fun)}
+  defp do_reduce([],    {:cont, acc}, _fun),   do: {:done, acc}
+  defp do_reduce([h|t], {:cont, acc}, fun),    do: do_reduce(t, fun.(h, acc), fun)
+
+
+  def member?(%TodoList{entries: entries}, %{date: date, title: title}) do
+    result = entries |> Enum.any?(fn { _id, entry } ->
+      entry.date == date && entry.title == title
+    end)
+    { :ok, result }
+  end
+
+  def member?(%TodoList{entries: entries}, id) do
+    result = entries |> Enum.any?(fn {entry_id, _entry} -> entry_id == id end)
+    { :ok, result }
+  end
+
+
+  def count(%TodoList{entries: entries}) do
+    { :ok, Enum.count(entries) }
+  end
+
+end
