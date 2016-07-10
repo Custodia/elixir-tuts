@@ -1,0 +1,11 @@
+entry1 = %{date: {2013, 12, 19}, title: "Dentist"}
+entry2 = %{date: {2013, 12, 20}, title: "Shopping"}
+entry3 = %{date: {2013, 12, 19}, title: "Movies"}
+
+todo_list =
+  TodoList.new
+  |> TodoList.add_entry(entry1)
+  |> TodoList.add_entry(entry2)
+  |> TodoList.add_entry(entry3)
+
+IO.inspect(TodoList.entries(todo_list, {2013, 12, 19}))
