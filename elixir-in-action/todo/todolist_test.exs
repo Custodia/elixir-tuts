@@ -4,10 +4,7 @@ entry3 = %{date: {2013, 12, 19}, title: "Movies"}
 entry4 = %{date: {2013, 12, 19}, title: "Delete me"}
 
 todo_list =
-  TodoList.new
-  |> TodoList.add_entry(entry1)
-  |> TodoList.add_entry(entry2)
-  |> TodoList.add_entry(entry3)
+  TodoList.new([entry1, entry2 ,entry3])
   |> TodoList.add_entry(entry4)
 
 IO.inspect(TodoList.entries(todo_list, {2013, 12, 19}))
