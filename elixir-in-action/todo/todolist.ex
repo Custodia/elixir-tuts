@@ -49,3 +49,23 @@ defmodule TodoList do
   end
 
 end
+
+defimpl String.Chars, for: TodoList do
+  def to_string(%TodoList{entries: entries}) do
+    id_max_length =
+      Enum.map(entries, fn { id, _ } -> String.length("#{id}") end)
+      |> Enum.max()
+
+    "#TodoList\n{\n" <>
+    (entries
+    |> Enum.sort_by(fn {id, _} -> id end)
+    |> Enum.map(fn {id, %{ date: { year, month, day }, title: title}} ->
+        "#{String.pad_leading("#{id}", id_max_length + 4)}.  #{year}/" <>
+        "#{String.pad_leading("#{month}", 2, "0")}" <>
+        "/#{String.pad_leading("#{day}",  2, "0")}" <>
+        "   #{title}\n"
+      end)
+    |> Enum.reduce(&(&2 <> &1))) <>
+    "}"
+  end
+end
