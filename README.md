@@ -18,12 +18,6 @@ good commit messages.
   * Meh..
 
 
-* Make a "vertical pmap"
-  * Takes a list of elements and a list of functions
-  * Makes a process for each function
-    * Passes elements one by one through the chain in parallel
-
-
 * Implement a Djikstra service
   * Use protocols so that any type could be accepted
     * accessible?(loc1, loc2)

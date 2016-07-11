@@ -1,5 +1,64 @@
 defmodule Parallel do
 
+  defp process(func) do
+    receive do
+      pid ->
+        process(func, pid)
+    end
+  end
+
+  defp process(func, next_pid) do
+    receive do
+      :done ->
+        send next_pid, :done
+
+      elem ->
+        send next_pid, func.(elem)
+        process(func, next_pid)
+    end
+  end
+
+  defp send_pids([last], self), do: send last, self
+  defp send_pids([ head, next | tail ], self) do
+    send head, next
+    send_pids([next | tail], self)
+  end
+
+  defp receive_results(collection) do
+    receive do
+      :done -> collection
+
+      elem -> receive_results([elem | collection])
+    end
+  end
+
+
+  @doc """
+  Maps a collection in parallel vertically.
+
+  Takes a collection of elements, a collection of functions and makes a
+  process for each function passing elements function to function.
+
+  ## Example
+
+      iex> collection = [1, 2, 3, 4]
+      iex> funcs = [&(&1 + 1), &(&1 * 2), &(to_string(&1))]
+      iex> Parallel.vert_pmap(collection, funcs)
+      ["4", "6", "8", "10"]
+  """
+  def vert_pmap(collection, funcs) do
+    [ first_pid | _tail ] = pids = funcs
+    |> Enum.map(fn func -> spawn_link fn -> process(func) end end)
+
+    send_pids(pids, self)
+
+    collection |> Enum.each(fn (elem) -> send first_pid, elem end)
+    send first_pid, :done
+
+    receive_results([]) |> Enum.reverse()
+  end
+
+
   @doc """
   Maps a collection in parallel. Creates a process for each element.
 
