@@ -5,4 +5,8 @@ defmodule Testi do
     :ok
   end
 
+  def error_func do
+    throw "Server should still be on!"
+  end
+
 end

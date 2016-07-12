@@ -7,7 +7,18 @@ defmodule Memoize.Server do
 
 
   def memoize(module, function, params) do
-    GenServer.call __MODULE__, { :memoize, module, function, params }
+    case GenServer.call __MODULE__, { :get, { module, function, params } } do
+      :nope -> send_answer(module, function, params)
+
+      value -> value
+    end
+  end
+
+
+  def send_answer(module, function, params) do
+    result = apply(module, function, params)
+    GenServer.cast __MODULE__, { :set, { module, function, params }, result }
+    result
   end
 
 
@@ -15,19 +26,24 @@ defmodule Memoize.Server do
     { :ok, Map.new }
   end
 
-  def handle_call({ :memoize, module, function, params }, _from, map_set) do
-    key = { module, function , params}
-    IO.inspect(map_set)
-    if (Map.has_key?(map_set, key)) do
-      value = Map.get(map_set, key)
-      { :reply, value, map_set }
+
+  def handle_call({ :get, key }, _from, map) do
+    { _module, _function, _params } = key
+    IO.inspect(map)
+    if (Map.has_key?(map, key)) do
+      value = Map.get(map, key) 
+      { :reply, value, map }
     else
-      value = apply(module, function, params)
-      map_set = Map.put(map_set, key, value)
-      { :reply, value, map_set }
+      { :reply, :nope, map }
     end
   end
 
+  def handle_cast({ :set, key, value}, map) do
+    { _module, _function, _params } = key
+    map = Map.put(map, key, value)
+    IO.inspect(map)
+    { :noreply, map }
+  end
 
 
 end
