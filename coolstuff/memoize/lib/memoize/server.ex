@@ -26,6 +26,11 @@ defmodule Memoize.Server do
   end
 
 
+  def flush(module, function \\ nil, params \\ nil) do
+    GenServer.cast __MODULE__, { :flush, { module, function, params } }
+  end
+
+
   def init([]) do
     { :ok, Map.new }
   end
@@ -53,5 +58,19 @@ defmodule Memoize.Server do
     { :noreply, map }
   end
 
+
+  def handle_cast({ :flush, { module, function, params } }, map) do
+    new_map = map
+    |> Enum.filter(fn ({ key, _value }) ->
+      case key do
+        { ^module, ^function, ^params } -> false
+        { ^module, ^function, _params } when params == nil -> false
+        { ^module, _function, _params } when params == nil and function == nil -> false
+        _otherwise                      -> true
+      end
+    end)
+    |> Map.new()
+    { :noreply, new_map }
+  end
 
 end
