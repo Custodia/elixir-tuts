@@ -31,6 +31,11 @@ defmodule Memoize.Server do
   end
 
 
+  def flush_all do
+    GenServer.cast __MODULE__, { :flush_all }
+  end
+
+
   def init([]) do
     { :ok, Map.new }
   end
@@ -71,6 +76,11 @@ defmodule Memoize.Server do
     end)
     |> Map.new()
     { :noreply, new_map }
+  end
+
+
+  def handle_cast({ :flush_all }, map) do
+    { :noreply, Map.new }
   end
 
 end
