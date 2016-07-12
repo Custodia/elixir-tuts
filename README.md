@@ -30,3 +30,12 @@ good commit messages.
 * Implement a Telegram bot in elixir
   * Extend this into a telegram bot api?
   * Use phoenix?
+
+
+* Implement a memoization GenServer with `defmemo` macro
+  * `defmemo` should make a function that is automatically memoized
+  * Make a server for each module that uses memoization
+    * This shouldn't be visible in the module but rather come from
+      `use Memoization`
+  * Set up supervisors for the memoization servers
+  * Make a `defpmemo` macro that makes a private memoized function
