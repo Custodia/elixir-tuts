@@ -1,6 +1,10 @@
 defmodule Memoize.Server do
   use GenServer
 
+
+  ####
+  # External API
+
   def start_link do
     GenServer.start_link(__MODULE__, [], name: __MODULE__)
   end
@@ -27,16 +31,20 @@ defmodule Memoize.Server do
   end
 
 
+  ####
+  # GenServer implementation
+
   def handle_call({ :get, key }, _from, map) do
     { _module, _function, _params } = key
     IO.inspect(map)
     if (Map.has_key?(map, key)) do
-      value = Map.get(map, key) 
+      value = Map.get(map, key)
       { :reply, value, map }
     else
       { :reply, :nope, map }
     end
   end
+
 
   def handle_cast({ :set, key, value}, map) do
     { _module, _function, _params } = key
