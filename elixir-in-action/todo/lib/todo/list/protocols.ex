@@ -1,10 +1,10 @@
-defimpl String.Chars, for: TodoList do
-  def to_string(%TodoList{entries: entries}) do
+defimpl String.Chars, for: Todo.List do
+  def to_string(%Todo.List{entries: entries}) do
     id_max_length =
       Enum.map(entries, fn { id, _ } -> String.length("#{id}") end)
       |> Enum.max()
 
-    "%TodoList\n{\n" <>
+    "%Todo.List\n{\n" <>
     (entries
     |> Enum.sort_by(fn {id, _} -> id end)
     |> Enum.map(fn {id, %{ date: { year, month, day }, title: title}} ->
@@ -19,7 +19,7 @@ defimpl String.Chars, for: TodoList do
   end
 end
 
-defimpl Collectable, for: TodoList do
+defimpl Collectable, for: Todo.List do
 
   def into(original) do
     { original, &into_callback/2 }
@@ -27,7 +27,7 @@ defimpl Collectable, for: TodoList do
 
 
   defp into_callback(todo_list, {:cont, entry}) do
-    TodoList.add_entry(todo_list, entry)
+    Todo.List.add_entry(todo_list, entry)
   end
 
   defp into_callback(todo_list, :done), do: todo_list
@@ -35,9 +35,9 @@ defimpl Collectable, for: TodoList do
 
 end
 
-defimpl Enumerable, for: TodoList do
+defimpl Enumerable, for: Todo.List do
 
-  def reduce(%TodoList{entries: entries}, acc, fun) do
+  def reduce(%Todo.List{entries: entries}, acc, fun) do
     entries =
       entries |> HashDict.to_list()
       |> Enum.sort_by(fn { id, _entry } -> id end)
@@ -51,20 +51,20 @@ defimpl Enumerable, for: TodoList do
   defp do_reduce([h|t], {:cont, acc}, fun),    do: do_reduce(t, fun.(h, acc), fun)
 
 
-  def member?(%TodoList{entries: entries}, %{date: date, title: title}) do
+  def member?(%Todo.List{entries: entries}, %{date: date, title: title}) do
     result = entries |> Enum.any?(fn { _id, entry } ->
       entry.date == date && entry.title == title
     end)
     { :ok, result }
   end
 
-  def member?(%TodoList{entries: entries}, id) do
+  def member?(%Todo.List{entries: entries}, id) do
     result = entries |> Enum.any?(fn {entry_id, _entry} -> entry_id == id end)
     { :ok, result }
   end
 
 
-  def count(%TodoList{entries: entries}) do
+  def count(%Todo.List{entries: entries}) do
     { :ok, Enum.count(entries) }
   end
 

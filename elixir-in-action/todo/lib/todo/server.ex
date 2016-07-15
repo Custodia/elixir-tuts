@@ -1,4 +1,4 @@
-defmodule TodoList.Server do
+defmodule Todo.Server do
   use GenServer
 
 
@@ -48,25 +48,25 @@ defmodule TodoList.Server do
   # GenServer implementation
 
   def init(nil) do
-    { :ok, TodoList.new }
+    { :ok, Todo.List.new }
   end
 
 
-  def handle_call({ :entries, date }, _from, %TodoList{} = todo_list) do
-    { :reply, TodoList.entries(todo_list, date), todo_list }
+  def handle_call({ :entries, date }, _from, %Todo.List{} = todo_list) do
+    { :reply, Todo.List.entries(todo_list, date), todo_list }
   end
 
 
-  def handle_cast({ :add, entry }, %TodoList{} = todo_list) do
-    { :noreply, TodoList.add_entry(todo_list,entry) }
+  def handle_cast({ :add, entry }, %Todo.List{} = todo_list) do
+    { :noreply, Todo.List.add_entry(todo_list,entry) }
   end
 
-  def handle_cast({ :update, id, func }, %TodoList{} = todo_list) do
-    { :noreply, TodoList.update_entry(todo_list, id, func) }
+  def handle_cast({ :update, id, func }, %Todo.List{} = todo_list) do
+    { :noreply, Todo.List.update_entry(todo_list, id, func) }
   end
 
-  def handle_cast({ :remove, id }, %TodoList{} = todo_list) do
-    { :noreply, TodoList.remove_entry(todo_list, id) }
+  def handle_cast({ :remove, id }, %Todo.List{} = todo_list) do
+    { :noreply, Todo.List.remove_entry(todo_list, id) }
   end
 
 end

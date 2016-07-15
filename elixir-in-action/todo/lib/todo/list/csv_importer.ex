@@ -1,9 +1,9 @@
-defmodule TodoList.CsvImporter do
+defmodule Todo.List.CsvImporter do
 
   def import!(file_name) do
     File.stream!(file_name)
     |> Enum.map(&parse_line/1)
-    |> TodoList.new()
+    |> Todo.List.new()
   end
 
 
