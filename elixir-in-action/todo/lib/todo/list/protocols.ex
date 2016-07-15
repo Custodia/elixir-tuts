@@ -30,8 +30,8 @@ defimpl Collectable, for: Todo.List do
     Todo.List.add_entry(todo_list, entry)
   end
 
-  defp into_callback(todo_list, :done), do: todo_list
-  defp into_callback(todo_list, :halt), do: :ok
+  defp into_callback(todo_list,  :done), do: todo_list
+  defp into_callback(_todo_list, :halt), do: :ok
 
 end
 

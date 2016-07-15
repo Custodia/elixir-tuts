@@ -5,40 +5,40 @@ defmodule Todo.Server do
   ####
   # External API
 
-  def start_link do
-    GenServer.start_link(__MODULE__, nil, name: __MODULE__)
+  def start do
+    GenServer.start_link(__MODULE__, nil)
   end
 
 
-  def add_entry(entry) do
+  def add_entry(pid, entry) do
     is_valid? entry
-    GenServer.cast __MODULE__, { :add, entry }
+    GenServer.cast pid, { :add, entry }
   end
 
 
-  def entries(date) do
-    GenServer.call __MODULE__, { :entries, date }
+  def entries(pid, date) do
+    GenServer.call pid, { :entries, date }
   end
 
 
-  def update_entry(new_entry) do
-    update_entry(new_entry.id, fn _ -> new_entry end)
+  def update_entry(pid, new_entry) do
+    update_entry(pid, new_entry.id, fn _ -> new_entry end)
   end
 
-  def update_entry(id, func) do
-    GenServer.cast __MODULE__, { :update, id, func }
+  def update_entry(pid, id, func) do
+    GenServer.cast pid, { :update, id, func }
   end
 
 
-  def remove_entry(id) do
-    GenServer.cast __MODULE__, { :remove, id }
+  def remove_entry(pid, id) do
+    GenServer.cast pid, { :remove, id }
   end
 
 
   ####
   # Helper methods
 
-  def is_valid?(entry) do
+  defp is_valid?(entry) do
     %{ date: { _, _, _ }, title: _ } = entry
     entry
   end
