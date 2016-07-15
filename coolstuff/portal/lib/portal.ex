@@ -53,6 +53,20 @@ defmodule Portal do
     portal
   end
 
+  @doc """
+  Pushes data to the left in the given `portal`.
+  """
+  def push_left(%Portal{ left: left, right: right} = portal) do
+    alias Portal.Door
+
+    case Door.pop(right) do
+      :error -> :ok
+      { :ok, h } -> Door.push(left, h)
+    end
+
+    portal
+  end
+
 end
 
 
