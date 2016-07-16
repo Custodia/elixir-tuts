@@ -5,8 +5,8 @@ defmodule Todo.Server do
   ####
   # External API
 
-  def start do
-    GenServer.start_link(__MODULE__, nil)
+  def start(list_name) do
+    GenServer.start_link(__MODULE__, list_name)
   end
 
 
@@ -47,26 +47,36 @@ defmodule Todo.Server do
   ####
   # GenServer implementation
 
-  def init(nil) do
-    { :ok, Todo.List.new }
+  def init(list_name) do
+    { :ok, { list_name, Todo.List.new } }
   end
 
 
-  def handle_call({ :entries, date }, _from, %Todo.List{} = todo_list) do
-    { :reply, Todo.List.entries(todo_list, date), todo_list }
+  def handle_call({ :entries, date }, _from, { list_name, todo_list }) do
+    %Todo.List{} = todo_list
+    { :reply, Todo.List.entries(todo_list, date), { list_name, todo_list } }
   end
 
 
-  def handle_cast({ :add, entry }, %Todo.List{} = todo_list) do
-    { :noreply, Todo.List.add_entry(todo_list,entry) }
+  def handle_cast({ :add, entry }, { list_name, todo_list }) do
+    %Todo.List{} = todo_list
+    new_state = Todo.List.add_entry(todo_list,entry)
+    Todo.Database.store(list_name, new_state)
+    { :noreply, { list_name, new_state } }
   end
 
-  def handle_cast({ :update, id, func }, %Todo.List{} = todo_list) do
-    { :noreply, Todo.List.update_entry(todo_list, id, func) }
+  def handle_cast({ :update, id, func }, { list_name, todo_list }) do
+    %Todo.List{} = todo_list
+    new_state = Todo.List.update_entry(todo_list, id, func)
+    Todo.Database.store(list_name, new_state)
+    { :noreply, { list_name, new_state } }
   end
 
-  def handle_cast({ :remove, id }, %Todo.List{} = todo_list) do
-    { :noreply, Todo.List.remove_entry(todo_list, id) }
+  def handle_cast({ :remove, id }, { list_name, todo_list }) do
+    %Todo.List{} = todo_list
+    new_state = Todo.List.remove_entry(todo_list, id)
+    Todo.Database.store(list_name, new_state)
+    { :noreply, { list_name, new_state } }
   end
 
 end
