@@ -1,6 +1,7 @@
 defmodule Todo.Database do
   use GenServer
 
+  @workers 3
 
   ####
   # External API
@@ -11,12 +12,18 @@ defmodule Todo.Database do
 
 
   def store(key, data) do
-    GenServer.cast :database_server, { :store, key, data }
+    worker_id = :erlang.phash2(key, @workers)
+    worker = GenServer.call :database_server, { :get_worker, worker_id }
+
+    GenServer.cast worker, { :store, key, data }
   end
 
 
   def get(key) do
-    GenServer.call :database_server, { :get, key }
+    worker_id = :erlang.phash2(key, @workers)
+    worker = GenServer.call :database_server, { :get_worker, worker_id }
+
+    GenServer.call worker, { :get, key }
   end
 
 
@@ -25,25 +32,18 @@ defmodule Todo.Database do
 
   def init(db_folder) do
     File.mkdir_p!(db_folder)
-    { :ok, db_folder }
+
+    worker_map = 1..@workers
+    |> Enum.map(&{ &1 - 1, Todo.Database.Worker.start(db_folder) })
+    |> Map.new()
+
+    { :ok, worker_map }
   end
 
 
-  def handle_cast({ :store, key, data }, db_folder) do
-    file_name(db_folder, key)
-    |> File.write!(:erlang.term_to_binary(data))
-
-    { :noreply, db_folder}
-  end
-
-
-  def handle_call({ :get, key }, _, db_folder) do
-    data = case File.read(file_name(db_folder, key)) do
-      { :ok, contents } -> :erlang.binary_to_term(contents)
-      _ -> nil
-    end
-
-    { :reply, data, db_folder }
+  def handle_call({ :get_worker, key }, caller, worker_map) do
+    worker = Map.get(worker_map, key)
+    { :reply, worker, worker_map }
   end
 
 
