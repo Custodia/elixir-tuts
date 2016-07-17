@@ -5,20 +5,23 @@ defmodule Todo.Database.Worker do
   ####
   # External API
 
-  def start_link(db_folder) do
-    IO.inspect "Starting Todo.Database.Worker"
-    { :ok, pid } = GenServer.start_link(__MODULE__, db_folder)
-    pid
+  def start_link(db_folder, worker_id) do
+    IO.inspect "Starting Todo.Database.Worker no: #{worker_id}"
+    GenServer.start_link(
+      __MODULE__,
+      db_folder,
+      name: via_tuple(worker_id)
+    )
   end
 
 
-  def store(pid, key, data) do
-    GenServer.cast pid, { :store, key, data }
+  def store(worker_id, key, data) do
+    GenServer.cast via_tuple(worker_id), { :store, key, data }
   end
 
 
-  def get(pid, key) do
-    GenServer.call pid, { :get, key }
+  def get(worker_id, key) do
+    GenServer.call via_tuple(worker_id), { :get, key }
   end
 
 
@@ -51,6 +54,14 @@ defmodule Todo.Database.Worker do
     end)
 
     { :noreply, db_folder }
+  end
+
+
+  ####
+  # Helper functions
+
+  defp via_tuple(worker_id) do
+    { :via, Todo.ProcessRegistry, { :database_worker, worker_id } }
   end
 
 

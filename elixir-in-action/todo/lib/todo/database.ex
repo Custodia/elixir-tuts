@@ -1,53 +1,35 @@
 defmodule Todo.Database do
   use GenServer
 
-  @workers 3
+  @pool_size 3
 
   ####
   # External API
 
   def start_link(db_folder) do
-    IO.inspect "Starting Todo.Database"
-    GenServer.start_link(__MODULE__, db_folder, name: :database_server)
+    Todo.Database.WorkerSupervisor.start_link(db_folder, @pool_size)
   end
 
 
   def store(key, data) do
-    worker_id = :erlang.phash2(key, @workers)
-    worker = GenServer.call :database_server, { :get_worker, worker_id }
-
-    GenServer.cast worker, { :store, key, data }
+    key
+    |> choose_worker
+    |> Todo.Database.Worker.store(key, data)
   end
 
 
   def get(key) do
-    worker_id = :erlang.phash2(key, @workers)
-    worker = GenServer.call :database_server, { :get_worker, worker_id }
-
-    GenServer.call worker, { :get, key }
+    key
+    |> choose_worker
+    |> Todo.Database.Worker.get(key)
   end
 
 
   ####
-  # GenServer implementation
+  # Helper functions
 
-  def init(db_folder) do
-    File.mkdir_p!(db_folder)
-
-    worker_map = 1..@workers
-    |> Enum.map(&{ &1 - 1, Todo.Database.Worker.start_link(db_folder) })
-    |> Map.new()
-
-    { :ok, worker_map }
+  def choose_worker(key) do
+    :erlang.phash2(key, @pool_size) + 1
   end
-
-
-  def handle_call({ :get_worker, key }, caller, worker_map) do
-    worker = Map.get(worker_map, key)
-    { :reply, worker, worker_map }
-  end
-
-
-  defp file_name(db_folder, key), do: "#{db_folder}/#{key}"
 
 end
