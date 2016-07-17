@@ -7,7 +7,10 @@ defmodule Todo.Supervisor do
   end
 
   def init(_) do
-    processes = [worker(Todo.Cache, [])]
+    processes = [
+      worker(Todo.Cache, []),
+      worker(Todo.Database, ["./persist/"])
+    ]
     supervise(processes, strategy: :one_for_one)
   end
 end
