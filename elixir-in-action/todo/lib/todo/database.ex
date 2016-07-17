@@ -6,8 +6,9 @@ defmodule Todo.Database do
   ####
   # External API
 
-  def start(db_folder) do
-    GenServer.start(__MODULE__, db_folder, name: :database_server)
+  def start_link(db_folder) do
+    IO.inspect "Starting Todo.Database"
+    GenServer.start_link(__MODULE__, db_folder, name: :database_server)
   end
 
 
@@ -34,7 +35,7 @@ defmodule Todo.Database do
     File.mkdir_p!(db_folder)
 
     worker_map = 1..@workers
-    |> Enum.map(&{ &1 - 1, Todo.Database.Worker.start(db_folder) })
+    |> Enum.map(&{ &1 - 1, Todo.Database.Worker.start_link(db_folder) })
     |> Map.new()
 
     { :ok, worker_map }

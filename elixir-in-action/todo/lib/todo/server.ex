@@ -5,7 +5,8 @@ defmodule Todo.Server do
   ####
   # External API
 
-  def start(list_name) do
+  def start_link(list_name) do
+    IO.inspect "Starting Todo.Server for todo list: #{list_name}"
     GenServer.start_link(__MODULE__, list_name)
   end
 

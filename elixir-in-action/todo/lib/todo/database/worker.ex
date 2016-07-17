@@ -5,8 +5,9 @@ defmodule Todo.Database.Worker do
   ####
   # External API
 
-  def start(db_folder) do
-    { :ok, pid } = GenServer.start(__MODULE__, db_folder)
+  def start_link(db_folder) do
+    IO.inspect "Starting Todo.Database.Worker"
+    { :ok, pid } = GenServer.start_link(__MODULE__, db_folder)
     pid
   end
 
