@@ -6,7 +6,8 @@ defmodule Todo.ProcessRegistry do
   # External API
 
   def start_link do
-    GenServer.start(__MODULE__, nil, name: :process_registry)
+    IO.inspect "Starting Todo.ProcessRegistry"
+    GenServer.start_link(__MODULE__, nil, name: :process_registry)
   end
 
 
