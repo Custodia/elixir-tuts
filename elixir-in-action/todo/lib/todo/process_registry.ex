@@ -17,12 +17,15 @@ defmodule Todo.ProcessRegistry do
 
 
   def whereis_name(name) do
-    GenServer.call :process_registry, { :whereis_name, name }
+    case :ets.lookup(:process_registry, name) do
+      [{ ^name, pid }] -> pid
+      _ -> :undefined
+    end
   end
 
 
   def unregister_name(name) do
-    GenServer.cast :process_registry, { :unregister_name, name }
+    GenServer.call :process_registry, { :unregister_name, name }
   end
 
 
@@ -40,46 +43,31 @@ defmodule Todo.ProcessRegistry do
   # GenServer implementation
 
   def init(_) do
-    { :ok, HashDict.new }
+    :ets.new(:process_registry, [ :named_table, :protected, :set ])
+
+    { :ok, nil }
   end
 
 
-  def handle_call({ :register_name, key, pid }, _, process_registry) do
-    case HashDict.get(process_registry, key) do
-      nil ->
+  def handle_call({ :register_name, key, pid }, _, state) do
+    case whereis_name(key) do
+      :undefined ->
         Process.monitor(pid)
-        { :reply, :yes, HashDict.put(process_registry, key, pid) }
-      _ ->
-        { :reply, :no, process_registry }
+        :ets.insert(:process_registry, { key, pid })
+        { :reply, :yes, state }
+      _otherwise -> { :reply, :no, state}
     end
   end
 
-  def handle_call({ :whereis_name, key }, _, process_registry) do
-    {
-      :reply,
-      HashDict.get(process_registry, key, :undefined),
-      process_registry
-    }
+  def handle_call({ :unregister_name, name }, state) do
+    :ets.delete(:process_registry, name)
+    { :reply, name, state }
   end
 
 
-  def handle_cast({ :unregister_name, name }, process_registry) do
-    { :noreply, HashDict.delete(process_registry, name) }
-  end
-
-
-  def handle_info({ :DOWN, _, :process, pid, _}, process_registry) do
-    { :noreply, deregister_pid(process_registry, pid) }
-  end
-
-
-  ####
-  # Helper functions
-
-  defp deregister_pid(process_registry, pid) do
-    process_registry
-    |> Enum.filter(fn ({ _name, elem_pid }) -> elem_pid != pid end)
-    |> Enum.into(HashDict.new)
+  def handle_info({ :DOWN, _, :process, pid, _}, state) do
+    :ets.match_delete(:process_registry, {:_, pid})
+    { :noreply, state }
   end
 
 end
