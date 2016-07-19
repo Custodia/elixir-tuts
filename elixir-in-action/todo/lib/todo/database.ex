@@ -1,34 +1,29 @@
 defmodule Todo.Database do
-  use GenServer
-
   @pool_size 3
 
-  ####
-  # External API
 
-  def start_link(db_folder) do
-    Todo.Database.WorkerSupervisor.start_link(db_folder, @pool_size)
+  def start_link do
+    :mnesia.stop
+    :mnesia.create_schema([node()])
+    :mnesia.start
+    :mnesia.create_table(:todo_lists, [ attributes: [:name, :list], disc_only_copies: [node()] ])
+    :ok = :mnesia.wait_for_tables([:todo_lists], 5000)
+
+    Todo.Database.WorkerSupervisor.start_link(@pool_size)
   end
 
 
   def store(key, data) do
-    key
-    |> choose_worker
-    |> Todo.Database.Worker.store(key, data)
+    Todo.Database.Worker.store(choose_worker(key), key, data)
   end
 
 
   def get(key) do
-    key
-    |> choose_worker
-    |> Todo.Database.Worker.get(key)
+    Todo.Database.Worker.get(choose_worker(key), key)
   end
 
 
-  ####
-  # Helper functions
-
-  def choose_worker(key) do
+  defp choose_worker(key) do
     :erlang.phash2(key, @pool_size) + 1
   end
 

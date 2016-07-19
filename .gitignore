@@ -12,3 +12,5 @@ erl_crash.dump
 # Ignore generated docs
 programming-elixir/issues/issues
 programming-elixir/issues/doc/
+
+Mnesia.*/
