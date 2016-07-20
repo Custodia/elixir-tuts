@@ -7,7 +7,9 @@ defmodule Todo.Server do
 
   def start_link(list_name) do
     IO.inspect "Starting Todo.Server for todo list: #{list_name}"
-    GenServer.start_link(__MODULE__, list_name, name: via_tuple(list_name))
+    GenServer.start_link(
+      __MODULE__, list_name,
+      name: { :global, { :todo_server, list_name }})
   end
 
 
@@ -37,7 +39,7 @@ defmodule Todo.Server do
 
 
   def whereis_name(name) do
-    :gproc.whereis_name({ :n, :l, { :todo_server, name } })
+    :global.whereis_name({ :todo_server, name })
   end
 
 
@@ -47,11 +49,6 @@ defmodule Todo.Server do
   defp is_valid?(entry) do
     %{ date: { _, _, _ }, title: _ } = entry
     entry
-  end
-
-
-  defp via_tuple(name) do
-    { :via, :gproc, { :n, :l, { :todo_server, name } } }
   end
 
 
