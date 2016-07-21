@@ -18,6 +18,7 @@ defmodule Todo.Mixfile do
   def application do
     [
       applications: [:logger, :gproc, :cowboy, :plug],
+      included_applications: [:mnesia],
       mod: { Todo.Application, [] }
     ]
   end
@@ -37,7 +38,8 @@ defmodule Todo.Mixfile do
       { :cowboy, "1.0.0" },
       { :plug, "1.1.6" },
       { :meck, "0.8.2", only: :test },
-      { :httpoison, "0.8.0", only: :test }
+      { :httpoison, "0.8.0", only: :test },
+      { :exrm, "1.0.5" }
     ]
   end
 end
