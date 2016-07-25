@@ -14,3 +14,11 @@ programming-elixir/issues/issues
 programming-elixir/issues/doc/
 
 Mnesia.*/
+
+
+
+# Phoenix gitignore
+/db
+**/node_modules
+**/priv/static/
+**/config/prod.secret.exs
