@@ -1,4 +1,5 @@
 defmodule Rumbl.ModelCase do
+  use ExUnit.CaseTemplate
   @moduledoc """
   This module defines the test case to be used by
   model tests.
@@ -21,6 +22,7 @@ defmodule Rumbl.ModelCase do
       import Ecto
       import Ecto.Changeset
       import Ecto.Query
+      import Rumbl.TestHelpers
       import Rumbl.ModelCase
     end
   end
