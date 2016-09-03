@@ -25,6 +25,15 @@ let Video = {
             msgInput.value = ""
         })
 
+        msgContainer.addEventListener("click", e => {
+            e.preventDefault()
+            let seconds = e.target.getAttribute("data-seek") ||
+                          e.target.parentNode.getAttribute("data-seek")
+            if (!seconds) { return }
+
+            Player.seekTo(seconds)
+        })
+
         vidChannel.on("new_annotation", (resp) => {
             this.renderAnnotation(msgContainer, resp)
         })
@@ -45,7 +54,8 @@ let Video = {
     renderAnnotation(msgContainer, {user, body, at}){
         let template = document.createElement("div")
         template.innerHTML = `
-        <a href="#" data-seek"${this.esc(at)}">
+        <a href="#" data-seek="${this.esc(at)}">
+            [${this.formatTime(at)}]
             <b>${this.esc(user.username)}</b>: ${this.esc(body)}
         </a>
             `
