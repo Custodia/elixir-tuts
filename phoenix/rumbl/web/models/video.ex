@@ -26,7 +26,6 @@ defmodule Rumbl.Video do
   end
 
   defp slugify_title(changeset) do
-    IO.inspect changeset
     if title = get_change(changeset, :title) do
       put_change(changeset, :slug, slugify(title))
     else
