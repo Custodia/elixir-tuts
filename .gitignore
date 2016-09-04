@@ -23,3 +23,8 @@ Mnesia.*/
 **/priv/static/
 **/config/prod.secret.exs
 **/config/dev.secret.exs
+
+## Emacs .gitignore
+
+# Projectile
+.projectile
